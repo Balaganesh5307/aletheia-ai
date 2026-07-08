@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-[#6C63FF] to-[#8B5CF6] flex items-center justify-center text-white font-bold shadow-md shadow-purple-500/10">
-              {user ? user.name.substring(0, 2).toUpperCase() : 'IQ'}
+              {user ? user.name.substring(0, 2).toUpperCase() : 'AA'}
             </div>
             <div className="hidden sm:block">
               <span className="block text-sm font-semibold text-slate-200">{user?.name || 'Guest User'}</span>

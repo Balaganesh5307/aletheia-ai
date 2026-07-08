@@ -76,14 +76,14 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
     }
 
     // Direct bypass configurations for developer preview accounts
-    if (email === 'client@interviewiq.ai' && password === 'Password123') {
+    if (email === 'user@gmail.com' && password === 'user123') {
       const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439011', email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
       res.status(200).json({
         token: mockToken,
         user: {
           id: '507f1f77bcf86cd799439011',
           name: 'John Doe (Candidate)',
-          email: 'client@interviewiq.ai',
+          email: 'user@gmail.com',
           achievements: DEFAULT_ACHIEVEMENTS,
           stats: {
             totalInterviews: 4,
@@ -95,14 +95,14 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
-    if (email === 'admin@interviewiq.ai' && password === 'AdminPassword123') {
+    if (email === 'admin@gmail.com' && password === 'admin123') {
       const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439022', email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
       res.status(200).json({
         token: mockToken,
         user: {
           id: '507f1f77bcf86cd799439022',
           name: 'Jane Smith (Admin)',
-          email: 'admin@interviewiq.ai',
+          email: 'admin@gmail.com',
           achievements: [
             ...DEFAULT_ACHIEVEMENTS,
             { id: 'expert_90', title: 'Perfect IQ', description: 'Score 90+ in a session', icon: 'Zap', unlockedAt: new Date() }

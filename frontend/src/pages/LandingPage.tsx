@@ -147,7 +147,7 @@ const LandingPage: React.FC = () => {
     },
     {
       q: "Is my personal resume data kept private?",
-      a: "Yes. All resumes uploaded to InterviewIQ AI are encrypted at rest and scoped strictly to your user profile. We never train public machine learning models on your uploaded CVs."
+      a: "Yes. All resumes uploaded to Aletheia AI are encrypted at rest and scoped strictly to your user profile. We never train public machine learning models on your uploaded CVs."
     },
     {
       q: "Can I customize the job role and difficulty?",
@@ -170,7 +170,7 @@ const LandingPage: React.FC = () => {
             <Zap className="text-white h-5 w-5" />
           </div>
           <h1 className="font-bold text-xl tracking-tight">
-            Interview<span className="text-[#6C63FF]">IQ</span>
+            Aletheia<span className="text-[#6C63FF]"> AI</span>
           </h1>
         </div>
         <div className="flex items-center gap-4">
@@ -203,7 +203,7 @@ const LandingPage: React.FC = () => {
             </h1>
             
             <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl font-normal text-left">
-              InterviewIQ AI is the world's most advanced Mock Interview simulator. Tailor scenarios with your resume, practice live webcam body posture reviews, and get graded on verbal pacing.
+              Aletheia AI is the world's most advanced Mock Interview simulator. Tailor scenarios with your resume, practice live webcam body posture reviews, and get graded on verbal pacing.
             </p>
 
             {/* CTAs */}
@@ -560,7 +560,7 @@ const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-850 flex flex-col md:flex-row items-center justify-between text-slate-500 text-xs gap-4 relative z-10">
         <div>
-          <span>&copy; 2026 InterviewIQ AI Inc. All rights reserved.</span>
+          <span>&copy; 2026 Aletheia AI Inc. All rights reserved.</span>
         </div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>

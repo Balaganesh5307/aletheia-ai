@@ -51,7 +51,7 @@ const ForgotPasswordPage: React.FC = () => {
             <Cpu className="text-white h-5 w-5" />
           </div>
           <h1 className="font-bold text-2xl tracking-tight">
-            Interview<span className="text-[#6C63FF]">IQ</span>
+            Aletheia<span className="text-[#6C63FF]"> AI</span>
           </h1>
         </div>
 

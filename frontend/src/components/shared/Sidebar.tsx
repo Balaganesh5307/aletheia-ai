@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
           </div>
           <div>
             <h1 className="font-bold text-lg tracking-tight text-white flex items-center gap-1">
-              Interview<span className="text-[#6C63FF]">IQ</span>
+              Aletheia<span className="text-[#6C63FF]"> AI</span>
             </h1>
             <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">AI Assistant</span>
           </div>
