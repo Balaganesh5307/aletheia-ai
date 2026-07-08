@@ -13,6 +13,7 @@ export interface IUser {
   id: string;
   name: string;
   email: string;
+  role?: string;
   achievements: IAchievement[];
   stats: {
     totalInterviews: number;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -14,100 +14,104 @@ import {
   ChevronDown,
   Play,
   Volume2,
-  Lock
+  Lock,
+  Cpu,
+  Monitor,
+  Eye,
+  Sliders,
+  Check,
+  RefreshCw
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'resume' | 'camera' | 'gemini' | 'analytics'>('resume');
 
-  // Interactive Question Generator States
-  const [demoRole, setDemoRole] = useState('Frontend Engineer');
-  const [demoDiff, setDemoDiff] = useState('Mid');
-  const [isGeneratingDemo, setIsGeneratingDemo] = useState(false);
-  const [generatedDemoQ, setGeneratedDemoQ] = useState(
-    "Select a role and difficulty above, then click 'Generate Mock Question' to experience our AI engine."
-  );
+  // Interactive Mock Playground State
+  const [demoState, setDemoState] = useState<'idle' | 'question' | 'recording' | 'feedback'>('idle');
+  const [selectedRole, setSelectedRole] = useState('Frontend Engineer');
+  const [selectedDiff, setSelectedDiff] = useState('Mid');
+  const [demoTimer, setDemoTimer] = useState(120);
+  const [typedAnswer, setTypedAnswer] = useState('');
+  const [webcamEnabled, setWebcamEnabled] = useState(false);
+  const [mockPosture, setMockPosture] = useState<'Aligned' | 'Off-center'>('Aligned');
+  const [mockGaze, setMockGaze] = useState<'Optimal' | 'Distracted'>('Optimal');
 
-  const sampleQuestions: Record<string, Record<string, string[]>> = {
-    'Frontend Engineer': {
-      'Entry': [
-        "Explain the virtual DOM concept in React and how it differs from the real DOM.",
-        "What are the different ways to style a React component, and when would you use Tailwind CSS?"
-      ],
-      'Mid': [
-        "How would you optimize a React application that is experiencing slow rendering on a list of 10,000 items?",
-        "Describe the differences between Server-Side Rendering (SSR) and Static Site Generation (SSG) in Next.js."
-      ],
-      'Senior': [
-        "Design a micro-frontend architecture for a large enterprise SaaS dashboard. How do you handle shared state?",
-        "How would you design a custom caching mechanism on the client side for graphql queries to reduce payload sizes?"
-      ]
-    },
-    'Backend Engineer': {
-      'Entry': [
-        "What is the role of middleware in an Express.js application, and how do you handle routing errors?",
-        "Explain the differences between GET and POST request methods in REST APIs."
-      ],
-      'Mid': [
-        "How do you handle database migrations in a production environment with millions of rows without causing downtime?",
-        "Explain connection pooling in PostgreSQL and how it optimizes application performance."
-      ],
-      'Senior': [
-        "Design a distributed rate limiter that handles 100,000 requests per second across a cluster of API gateways.",
-        "How would you resolve a database deadlock in a high-concurrency microservice handling bank transactions?"
-      ]
-    },
-    'Product Manager': {
-      'Mid': [
-        "How would you prioritize features for a new collaborative whiteboarding tool aimed at remote design teams?",
-        "Describe a time you had to make a product decision with incomplete or conflicting data. What was your framework?"
-      ],
-      'Senior': [
-        "Our daily active users for core file sharing dropped by 15% this week. Walk me through your root-cause analysis.",
-        "How would you define the long-term roadmap and growth loop metrics for a developer platform API product?"
-      ]
+  // Timer Tick during simulated recording
+  useEffect(() => {
+    let interval: any = null;
+    if (demoState === 'recording' && demoTimer > 0) {
+      interval = setInterval(() => {
+        setDemoTimer(prev => prev - 1);
+      }, 1000);
     }
+    return () => clearInterval(interval);
+  }, [demoState, demoTimer]);
+
+  const demoQuestions: Record<string, string> = {
+    'Frontend Engineer': "Explain how you would optimize a React 19 app that has large lists experiencing performance lags.",
+    'Backend Engineer': "How do you handle database deadlocks and race conditions in a high-concurrency Node.js gateway?",
+    'AI/ML Architect': "What parameters do you check when deploying a MediaPipe or Whisper pipeline to a serverless node?"
   };
 
-  const handleGenerateDemoQ = () => {
-    setIsGeneratingDemo(true);
-    setGeneratedDemoQ('');
+  const sampleAnswer = "To optimize rendering lag, I would implement virtualization techniques (like windowing), lazy-load heavy elements using React Suspense, and avoid inline function declarations in dependencies to prevent unnecessary reconciliation checks.";
+
+  // Typewriter simulated speech transcription
+  const startRecordingDemo = () => {
+    setDemoState('recording');
+    setDemoTimer(60);
+    setTypedAnswer('');
     
-    // Simulate typewriter effect
-    setTimeout(() => {
-      const rolesMap = sampleQuestions[demoRole] || sampleQuestions['Frontend Engineer'];
-      const questionsList = rolesMap[demoDiff] || rolesMap['Mid'] || rolesMap['Entry'];
-      const randomQ = questionsList[Math.floor(Math.random() * questionsList.length)];
-      
-      setGeneratedDemoQ(randomQ);
-      setIsGeneratingDemo(false);
-    }, 1200);
+    let words = sampleAnswer.split(' ');
+    let currentIdx = 0;
+    
+    const interval = setInterval(() => {
+      if (currentIdx < words.length) {
+        setTypedAnswer(prev => prev + (prev ? ' ' : '') + words[currentIdx]);
+        currentIdx++;
+        // Randomly simulate posture changes during speaking
+        if (currentIdx % 8 === 0) {
+          setMockPosture(Math.random() > 0.3 ? 'Aligned' : 'Off-center');
+          setMockGaze(Math.random() > 0.2 ? 'Optimal' : 'Distracted');
+        }
+      } else {
+        clearInterval(interval);
+      }
+    }, 180);
   };
 
   const features = [
     {
+      id: 'resume',
       title: 'AI Resume Intelligence',
-      description: 'Upload your resume and get immediate skills analysis, matching candidate profiles, and customizable question lists.',
+      subtitle: 'Smart Profile Ingestion',
+      description: 'Upload your CV and let Google Gemini extract framework proficiencies, experience depth, and custom quiz topics.',
       icon: FileText,
       color: '#6C63FF'
     },
     {
-      title: 'Interactive Webcam Simulator',
-      description: 'Simulate mock interviews with live emotion tracking, eye contact monitoring, and active body posture reports.',
+      id: 'camera',
+      title: 'Interactive Telemetry',
+      subtitle: 'Real-time Eye & Body Tracking',
+      description: 'Our webcam sub-modules map face landmarks to keep check of eye-contact stability and seated shoulder alignment.',
       icon: Video,
       color: '#8B5CF6'
     },
     {
-      title: 'Gemini NLP Assessment',
-      description: 'Receive real-world performance ratings grading the clarity, relevance, and depth of technical answers.',
+      id: 'gemini',
+      title: 'Gemini Answer Grading',
+      subtitle: 'Cognitive Response Rubrics',
+      description: 'Grading metrics measuring relevance, response clarity, and overall technical accuracy compared with top rubrics.',
       icon: Activity,
       color: '#06B6D4'
     },
     {
-      title: 'Structured Feedback & Analytics',
-      description: 'Get graphical dashboards with speech pacing, filler words analysis, strengths and action-item recommendations.',
+      id: 'analytics',
+      title: 'Dashboard Progression',
+      subtitle: 'Achievements & Score Trends',
+      description: 'Compare scores, track filler words frequency, and follow development advice charted in your dashboard.',
       icon: Award,
       color: '#F59E0B'
     }
@@ -147,7 +151,7 @@ const LandingPage: React.FC = () => {
     },
     {
       q: "Is my personal resume data kept private?",
-      a: "Yes. All resumes uploaded to InterviewIQ AI are encrypted at rest and scoped strictly to your user profile. We never train public machine learning models on your uploaded CVs."
+      a: "Yes. All resumes uploaded to Aletheia AI are encrypted at rest and scoped strictly to your user profile. We never train public machine learning models on your uploaded CVs."
     },
     {
       q: "Can I customize the job role and difficulty?",
@@ -160,8 +164,8 @@ const LandingPage: React.FC = () => {
   return (
     <div className="bg-[#0F172A] text-[#F8FAFC] min-h-screen relative overflow-hidden font-sans scroll-smooth">
       {/* Background ambient glow blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#6C63FF]/8 blur-[130px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#8B5CF6]/8 blur-[130px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#6C63FF]/8 blur-[130px] pointer-events-none animate-float-blob"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#8B5CF6]/8 blur-[130px] pointer-events-none animate-float-blob-delayed"></div>
 
       {/* Header bar */}
       <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between border-b border-slate-800/40 relative z-10">
@@ -170,7 +174,7 @@ const LandingPage: React.FC = () => {
             <Zap className="text-white h-5 w-5" />
           </div>
           <h1 className="font-bold text-xl tracking-tight">
-            Interview<span className="text-[#6C63FF]">IQ</span>
+            Aletheia<span className="text-[#6C63FF]"> AI</span>
           </h1>
         </div>
         <div className="flex items-center gap-4">
@@ -187,14 +191,14 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero section */}
-      <section className="max-w-7xl mx-auto px-6 pt-16 pb-20 relative z-10">
+      <section className="max-w-7xl mx-auto px-6 pt-12 pb-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column: Tagline & Intro */}
-          <div className="lg:col-span-7 space-y-6 text-left">
+          <div className="lg:col-span-6 space-y-6 text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#6C63FF]/10 border border-[#6C63FF]/30 text-[#A78BFA] text-xs font-semibold">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Interactive AI Simulation Enabled</span>
+              <Sparkles className="h-3.5 w-3.5 animate-pulse" />
+              <span>Version 2.0: Interactive Sandbox Console</span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-left">
@@ -203,7 +207,7 @@ const LandingPage: React.FC = () => {
             </h1>
             
             <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl font-normal text-left">
-              InterviewIQ AI is the world's most advanced Mock Interview simulator. Tailor scenarios with your resume, practice live webcam body posture reviews, and get graded on verbal pacing.
+              Aletheia AI is the world's most advanced Mock Interview simulator. Tailor scenarios with your resume, practice live webcam body posture reviews, and get graded on verbal pacing.
             </p>
 
             {/* CTAs */}
@@ -212,105 +216,210 @@ const LandingPage: React.FC = () => {
                 onClick={() => navigate('/register')}
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#6C63FF] hover:bg-[#5a52e0] text-white font-bold transition-all shadow-xl shadow-purple-500/25 flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
-                <span>Try Free Simulation</span>
+                <span>Launch Mock Interview</span>
                 <ArrowRight className="h-4.5 w-4.5" />
               </button>
               <a 
-                href="#pricing"
+                href="#interactive-features"
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-800/30 text-slate-200 font-bold transition-all text-sm flex items-center justify-center"
               >
-                View Premium Pricing
+                Interactive Walkthrough
               </a>
             </div>
           </div>
 
-          {/* Right Column: Interactive Question Preview Box */}
-          <div className="lg:col-span-5">
-            <div className="glass-card rounded-2xl p-6 border border-slate-800 shadow-2xl relative">
-              <div className="absolute top-0 right-0 h-16 w-16 bg-[#8B5CF6]/5 rounded-bl-full pointer-events-none"></div>
-              
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="h-4.5 w-4.5 text-[#6C63FF]" />
-                <h4 className="font-bold text-sm text-slate-200">Interactive AI Question preview</h4>
+          {/* Right Column: Hero AI Mock Sandbox Console */}
+          <div className="lg:col-span-6">
+            <div className="glass-card rounded-2xl p-6 border border-slate-850 shadow-2xl relative bg-slate-900/50 flex flex-col min-h-[440px] justify-between">
+              {/* Header block */}
+              <div className="flex justify-between items-center border-b border-slate-850 pb-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-rose-500"></div>
+                  <div className="h-2.5 w-2.5 rounded-full bg-amber-500"></div>
+                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500"></div>
+                </div>
+                <span className="text-[10px] text-slate-500 font-mono tracking-wider">Aletheia Mock Simulator</span>
+                <span className="text-[10px] text-[#A78BFA] font-bold">Interactive Sandbox</span>
               </div>
 
-              <div className="space-y-4 text-left">
-                {/* Role select */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Target Job Role</label>
-                  <select 
-                    value={demoRole}
-                    onChange={(e) => setDemoRole(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-850 text-slate-300 text-xs focus:outline-none focus:border-[#6C63FF]"
-                  >
-                    <option value="Frontend Engineer">Frontend Engineer</option>
-                    <option value="Backend Engineer">Backend Engineer</option>
-                    <option value="Product Manager">Product Manager</option>
-                  </select>
-                </div>
+              {/* State A: Idle Selection */}
+              {demoState === 'idle' && (
+                <div className="space-y-6 flex-grow flex flex-col justify-center text-left">
+                  <div>
+                    <h3 className="font-bold text-sm text-slate-200">Configure Sandbox Parameters</h3>
+                    <p className="text-[11px] text-slate-500 mt-1">Select a role and launch our mini mockup generator to test core widgets.</p>
+                  </div>
 
-                {/* Difficulty */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Difficulty level</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['Entry', 'Mid', 'Senior'].map((level) => (
-                      <button
-                        key={level}
-                        type="button"
-                        onClick={() => setDemoDiff(level)}
-                        className={`py-2 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
-                          demoDiff === level 
-                            ? 'bg-[#8B5CF6]/20 border-[#8B5CF6] text-[#A78BFA]' 
-                            : 'bg-slate-900 border-slate-850 text-slate-450 hover:border-slate-800'
-                        }`}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Job Role</label>
+                      <select 
+                        value={selectedRole}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-850 text-slate-350 text-xs focus:outline-none"
                       >
-                        {level}
-                      </button>
-                    ))}
+                        <option value="Frontend Engineer">Frontend Engineer</option>
+                        <option value="Backend Engineer">Backend Engineer</option>
+                        <option value="AI/ML Architect">AI/ML Architect</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Difficulty</label>
+                      <select 
+                        value={selectedDiff}
+                        onChange={(e) => setSelectedDiff(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-850 text-slate-350 text-xs focus:outline-none"
+                      >
+                        <option value="Entry">Entry</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Senior">Senior</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setDemoState('question')}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-95 font-bold text-xs text-white transition-all shadow-md shadow-purple-500/10 flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <span>Start Mock Simulator</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* State B: Displaying Question */}
+              {demoState === 'question' && (
+                <div className="space-y-6 flex-grow flex flex-col justify-between text-left">
+                  <div className="space-y-3">
+                    <span className="text-[10px] text-[#A78BFA] font-bold uppercase bg-[#8B5CF6]/10 px-2.5 py-1 rounded-full w-max block">
+                      Generated Scenario ({selectedDiff})
+                    </span>
+                    <h4 className="font-bold text-sm text-slate-200 leading-snug">
+                      "{demoQuestions[selectedRole] || demoQuestions['Frontend Engineer']}"
+                    </h4>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Click the trigger below to simulate speech input. The keyboard simulator will write a high-quality candidate response.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={startRecordingDemo}
+                    className="w-full py-3 rounded-xl bg-[#6C63FF] hover:bg-[#5a52e0] font-bold text-xs text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-purple-500/15"
+                  >
+                    <Volume2 className="h-4 w-4" />
+                    <span>Trigger Audio Input</span>
+                  </button>
+                </div>
+              )}
+
+              {/* State C: Recording/Equalizing Animation */}
+              {demoState === 'recording' && (
+                <div className="space-y-4 flex-grow flex flex-col justify-between text-left">
+                  {/* Webcam preview mock */}
+                  <div className="grid grid-cols-5 gap-4 items-center">
+                    <div className="col-span-2 aspect-video rounded-lg overflow-hidden bg-slate-950 border border-slate-850 flex items-center justify-center relative">
+                      {webcamEnabled ? (
+                        <div className="w-full h-full bg-[#6C63FF]/5 flex items-center justify-center text-xs text-[#A78BFA] font-semibold animate-pulse">
+                          <span>Webcam live feed</span>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => setWebcamEnabled(true)}
+                          className="h-8 px-2.5 rounded bg-slate-900 border border-slate-800 text-[9px] font-bold text-slate-350 hover:bg-slate-850 pointer-events-auto"
+                        >
+                          Enable webcam
+                        </button>
+                      )}
+                    </div>
+                    <div className="col-span-3 text-[10px] space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Posture Alignment:</span>
+                        <span className={`font-bold ${mockPosture === 'Aligned' ? 'text-emerald-400' : 'text-rose-400'}`}>{mockPosture}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Gaze Focus:</span>
+                        <span className={`font-bold ${mockGaze === 'Optimal' ? 'text-emerald-400' : 'text-rose-400'}`}>{mockGaze}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Speech input panel */}
+                  <div className="p-3 rounded-lg bg-slate-950/40 border border-slate-850 h-28 overflow-y-auto text-[11px] text-slate-300 italic scrollbar-thin">
+                    {typedAnswer || "Listening and transcribing..."}
+                  </div>
+
+                  {/* Equalizer animation */}
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-1 h-6 items-end">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map(bar => (
+                        <motion.div
+                          key={bar}
+                          animate={{ height: [4, 20, 4] }}
+                          transition={{ repeat: Infinity, duration: 0.8, delay: bar * 0.1 }}
+                          className="w-1 bg-[#8B5CF6] rounded-full"
+                          style={{ height: '4px' }}
+                        />
+                      ))}
+                    </div>
+                    
+                    <button
+                      onClick={() => setDemoState('feedback')}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] font-bold text-xs text-white transition-all cursor-pointer flex items-center gap-1 shadow"
+                    >
+                      <span>Grade Answer</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </div>
+              )}
 
-                {/* Interactive Generate Button */}
-                <button
-                  onClick={handleGenerateDemoQ}
-                  disabled={isGeneratingDemo}
-                  className="w-full py-2.5 rounded-lg bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] text-white text-xs font-bold transition-all shadow-md shadow-purple-500/10 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
-                >
-                  {isGeneratingDemo ? (
-                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ) : (
-                    <span>Generate Mock Question</span>
-                  )}
-                </button>
+              {/* State D: Feedback Scoring Report */}
+              {demoState === 'feedback' && (
+                <div className="space-y-4 flex-grow flex flex-col justify-between text-left">
+                  <div className="space-y-3">
+                    <span className="text-[10px] text-emerald-400 font-bold uppercase bg-emerald-400/10 px-2.5 py-1 rounded-full w-max block">
+                      Evaluation Complete
+                    </span>
+                    
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="p-2.5 rounded-lg bg-slate-950/40 border border-slate-850 text-center">
+                        <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider block">Mock IQ</span>
+                        <span className="text-lg font-extrabold text-white">84</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-950/40 border border-slate-850 text-center">
+                        <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider block">Pacing</span>
+                        <span className="text-sm font-bold text-slate-200">125 WPM</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-950/40 border border-slate-850 text-center">
+                        <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider block">Posture</span>
+                        <span className="text-sm font-bold text-emerald-400">92%</span>
+                      </div>
+                    </div>
 
-                {/* Typewriter Output Screen */}
-                <div className="p-4 rounded-xl bg-slate-950/50 border border-slate-850 min-h-[100px] flex items-center justify-center text-center">
-                  <AnimatePresence mode="wait">
-                    {isGeneratingDemo ? (
-                      <motion.div 
-                        key="loading"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="text-xs text-slate-500 animate-pulse"
-                      >
-                        Compiling custom scenario matrices...
-                      </motion.div>
-                    ) : (
-                      <motion.p
-                        key="question"
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-xs text-slate-300 leading-relaxed font-medium"
-                      >
-                        {generatedDemoQ}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+                    <div className="p-3 rounded-lg bg-slate-950/40 border border-slate-850 space-y-1 text-[10px]">
+                      <span className="font-bold text-[#A78BFA]">Career Coach Recommendation:</span>
+                      <p className="text-slate-400 leading-normal">
+                        Your answer covered key virtual DOM concepts accurately, but pacing fluctuated. Try reducing filler words by slowing down your speech by 10%.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setDemoState('idle');
+                      setTypedAnswer('');
+                    }}
+                    className="w-full py-2.5 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-900 font-bold text-xs text-slate-350 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    <span>Restart Sandbox Demo</span>
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
           </div>
+
         </div>
       </section>
 
@@ -328,107 +437,152 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Dashboard Preview mockup panel */}
-      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10 text-center">
-        <div className="max-w-3xl mx-auto space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Step into the SaaS Console</h2>
-          <p className="text-slate-400 text-sm">Experience the real-time webcam telemetry, gaze tracker feedback, and dynamic analytical charts.</p>
+      {/* Interactive Tabs Features Walkthrough */}
+      <section id="interactive-features" className="max-w-7xl mx-auto px-6 py-20 relative z-10 text-center">
+        <div className="max-w-3xl mx-auto space-y-4 mb-12">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Interactive Platform Walkthrough</h2>
+          <p className="text-slate-400 text-sm">Select any capability tab below to preview how our modules integrate dynamically.</p>
         </div>
 
-        <div className="relative mx-auto max-w-5xl rounded-2xl border border-slate-800 bg-slate-950 p-2 shadow-2xl shadow-purple-500/10">
-          <div className="rounded-xl overflow-hidden glass-card aspect-video flex flex-col p-6 bg-slate-900/60 relative text-left">
-            {/* Header bar mock */}
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-5">
-              <div className="flex items-center gap-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-rose-500"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-amber-500"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500"></div>
-              </div>
-              <span className="text-[10px] text-slate-500">interviewiq.ai/dashboard/session-preview</span>
-              <div className="w-10"></div>
-            </div>
-
-            {/* Content mockup mapping the screen elements */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 h-full items-stretch">
-              {/* Question & answer section */}
-              <div className="md:col-span-3 space-y-4 flex flex-col justify-between">
-                <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-850 space-y-2">
-                  <span className="text-[10px] text-[#A78BFA] font-bold uppercase tracking-wider">Question 2 of 5</span>
-                  <p className="text-xs text-slate-200 font-bold leading-normal">
-                    How do you manage cross-origin request policies (CORS) in an Express gateway serving React bundles?
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-slate-950/30 border border-slate-850 h-32 relative flex flex-col justify-between">
-                  <span className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Transcription Feed</span>
-                  <p className="text-[11px] text-slate-400 italic">"I configure CORS headers using the standard cors middle-tier dependencies, setting whitelist origins..."</p>
-                  <div className="flex justify-between items-center text-[10px] text-slate-500 mt-2">
-                    <span className="flex items-center gap-1"><Volume2 className="h-3 w-3" /> Transcribing...</span>
-                    <span>120 words</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Webcam & logs simulation */}
-              <div className="md:col-span-2 space-y-4">
-                <div className="rounded-xl overflow-hidden aspect-video relative bg-slate-950 border border-slate-850 flex items-center justify-center">
-                  <Video className="h-8 w-8 text-slate-650" />
-                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-md bg-[#6C63FF]/20 border border-[#6C63FF]/30 text-[#A78BFA] text-[9px] font-bold">
-                    Webcam simulator active
-                  </span>
-                  <div className="absolute bottom-3 left-3 right-3 p-2 rounded bg-slate-900/80 backdrop-blur border border-slate-800 text-[9px] text-emerald-400 font-semibold">
-                    Posture check: Aligned straight
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-850 space-y-2">
-                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest block">Confidence Index</span>
-                  <div className="grid grid-cols-2 gap-2 text-[10px]">
-                    <div className="bg-slate-900/50 p-2 rounded border border-slate-850">
-                      <span className="text-slate-500">Eye contact</span>
-                      <span className="block font-bold text-emerald-400">92% Optimal</span>
-                    </div>
-                    <div className="bg-slate-900/50 p-2 rounded border border-slate-850">
-                      <span className="text-slate-500">Dominant emotion</span>
-                      <span className="block font-bold text-slate-300">Neutral</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-800/40 relative z-10 text-center">
-        <div className="space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Revolutionize Your Interview Prep</h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto">Get feedback on all dimensions of your mock interview performance, powered by artificial intelligence.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, i) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="glass-card glass-card-hover p-6 rounded-2xl flex flex-col h-full justify-between text-left"
+        {/* Tab Switcher Headers */}
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto mb-10">
+          {features.map((feat) => (
+            <button
+              key={feat.id}
+              onClick={() => setActiveTab(feat.id as any)}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                activeTab === feat.id 
+                  ? 'bg-gradient-to-r from-[#6C63FF]/20 to-[#8B5CF6]/20 border-[#6C63FF] text-[#A78BFA] shadow'
+                  : 'bg-slate-900/50 border-slate-850 text-slate-450 hover:border-slate-800'
+              }`}
             >
-              <div>
-                <div 
-                  className="h-12 w-12 rounded-xl flex items-center justify-center mb-6 shadow-inner"
-                  style={{ backgroundColor: `${feature.color}15`, border: `1px solid ${feature.color}25` }}
-                >
-                  <feature.icon className="h-6 w-6" style={{ color: feature.color }} />
+              <span>{feat.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content Preview Card */}
+        <div className="max-w-4xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="glass-card rounded-2xl p-8 border border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-8 items-center text-left"
+            >
+              {/* Left Column: Descriptions */}
+              <div className="space-y-4">
+                <span className="text-[10px] text-[#A78BFA] font-bold uppercase tracking-widest block">
+                  {features.find(f => f.id === activeTab)?.subtitle}
+                </span>
+                <h3 className="text-xl font-extrabold text-white">
+                  {features.find(f => f.id === activeTab)?.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {features.find(f => f.id === activeTab)?.description}
+                </p>
+                <div className="pt-2">
+                  <button 
+                    onClick={() => navigate('/register')}
+                    className="inline-flex items-center gap-1.5 text-xs text-[#8B5CF6] hover:underline font-bold"
+                  >
+                    <span>Get started with this feature</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <h3 className="font-bold text-base mb-2 text-slate-100">{feature.title}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">{feature.description}</p>
+              </div>
+
+              {/* Right Column: Visual Component mockup */}
+              <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-850 p-4 min-h-[220px] flex flex-col justify-between">
+                
+                {activeTab === 'resume' && (
+                  <div className="space-y-3">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider block">Extracted Skill Profiles</span>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {['React', 'TypeScript', 'Node.js', 'Tailwind', 'MongoDB', 'Docker', 'FastAPI'].map(s => (
+                        <span key={s} className="px-2.5 py-1 rounded bg-[#6C63FF]/10 border border-[#6C63FF]/25 text-[#A78BFA] text-[10px] font-bold">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="p-2.5 rounded bg-slate-900 border border-slate-850/80 text-[10px] text-slate-400">
+                      <strong>AI Summary:</strong> Experience building fullstack dashboards, backend express integrations, and docker pipelines.
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'camera' && (
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center border-b border-slate-900 pb-2">
+                      <span className="text-[9px] text-slate-500 font-bold uppercase">Biometric Telemetry</span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[10px]">
+                      <div className="p-2 bg-slate-900 rounded border border-slate-850">
+                        <span className="text-slate-500 block">Posture:</span>
+                        <span className="font-bold text-emerald-400">Aligned (Correct)</span>
+                      </div>
+                      <div className="p-2 bg-slate-900 rounded border border-slate-850">
+                        <span className="text-slate-500 block">Eye Contact:</span>
+                        <span className="font-bold text-emerald-400">Optimal ( g. camera)</span>
+                      </div>
+                    </div>
+                    <div className="p-2 bg-slate-900/60 rounded text-[9px] text-slate-450 italic">
+                      "Sit straight, look directly at the webcam container."
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'gemini' && (
+                  <div className="space-y-3 text-[10px]">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase block">Grading Rubric Breakdown</span>
+                    <div className="space-y-2">
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-slate-400">Technical Accuracy</span>
+                          <span className="font-bold text-white">88%</span>
+                        </div>
+                        <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-[#6C63FF] h-full rounded-full" style={{ width: '88%' }}></div></div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-slate-400">Relevance Depth</span>
+                          <span className="font-bold text-white">82%</span>
+                        </div>
+                        <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-[#8B5CF6] h-full rounded-full" style={{ width: '82%' }}></div></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'analytics' && (
+                  <div className="space-y-3 text-[10px]">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase block">Score Trend Chart Preview</span>
+                    <div className="flex items-end justify-between h-20 pt-4 px-2 border-b border-slate-900">
+                      {[40, 60, 55, 75, 84].map((h, i) => (
+                        <div key={i} className="w-6 bg-[#8B5CF6] rounded-t" style={{ height: `${h}%` }}>
+                          <span className="text-[7px] text-slate-400 block -mt-4 text-center">{h}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between text-[8px] text-slate-650 px-1">
+                      <span>Session 1</span>
+                      <span>Session 2</span>
+                      <span>Session 3</span>
+                      <span>Session 4</span>
+                      <span>Session 5</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-[9px] text-slate-650 border-t border-slate-900 pt-2 text-center">
+                  Mockup telemetry dashboard.
+                </div>
               </div>
             </motion.div>
-          ))}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -560,7 +714,7 @@ const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-850 flex flex-col md:flex-row items-center justify-between text-slate-500 text-xs gap-4 relative z-10">
         <div>
-          <span>&copy; 2026 InterviewIQ AI Inc. All rights reserved.</span>
+          <span>&copy; 2026 Aletheia AI Inc. All rights reserved.</span>
         </div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-slate-300 transition-colors">Privacy Policy</a>

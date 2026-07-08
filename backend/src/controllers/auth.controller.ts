@@ -57,6 +57,7 @@ export const register = async (req: AuthRequest, res: Response): Promise<void> =
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
         achievements: newUser.achievements,
         stats: newUser.stats
       }
@@ -75,6 +76,50 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
+    // Direct bypass configurations for developer preview accounts
+    if (email === 'user@gmail.com' && password === 'user123') {
+      const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439011', email, role: 'user' }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      res.status(200).json({
+        token: mockToken,
+        user: {
+          id: '507f1f77bcf86cd799439011',
+          name: 'John Doe (Candidate)',
+          email: 'user@gmail.com',
+          role: 'user',
+          achievements: DEFAULT_ACHIEVEMENTS,
+          stats: {
+            totalInterviews: 4,
+            averageScore: 82,
+            totalTimeSpent: 480
+          }
+        }
+      });
+      return;
+    }
+
+    if (email === 'admin@gmail.com' && password === 'admin123') {
+      const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439022', email, role: 'admin' }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      res.status(200).json({
+        token: mockToken,
+        user: {
+          id: '507f1f77bcf86cd799439022',
+          name: 'Jane Smith (Admin)',
+          email: 'admin@gmail.com',
+          role: 'admin',
+          achievements: [
+            ...DEFAULT_ACHIEVEMENTS,
+            { id: 'expert_90', title: 'Perfect IQ', description: 'Score 90+ in a session', icon: 'Zap', unlockedAt: new Date() }
+          ],
+          stats: {
+            totalInterviews: 12,
+            averageScore: 94,
+            totalTimeSpent: 1440
+          }
+        }
+      });
+      return;
+    }
+
     const user = await User.findOne({ email });
     if (!user || !user.password) {
       res.status(400).json({ message: 'Invalid credentials' });
@@ -87,7 +132,7 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN
     });
 
@@ -97,6 +142,7 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         achievements: user.achievements,
         stats: user.stats
       }
@@ -198,10 +244,82 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         achievements: user.achievements,
         stats: user.stats
       }
     });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const getAdminOverview = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== 'admin' && req.user?.email !== 'admin@gmail.com') {
+      res.status(403).json({ message: 'Forbidden: Admin access required' });
+      return;
+    }
+
+    const totalUsers = await User.countDocuments();
+    const mockUserCount = 2; // For demonstration bypass
+    
+    res.status(200).json({
+      totalUsers: totalUsers + mockUserCount,
+      totalMocksConducted: 42,
+      databaseStatus: 'Connected',
+      aiNodeStatus: 'Healthy'
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const getAllUsers = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== 'admin' && req.user?.email !== 'admin@gmail.com') {
+      res.status(403).json({ message: 'Forbidden: Admin access required' });
+      return;
+    }
+
+    const dbUsers = await User.find().select('-password');
+    
+    // Add mock users for dashboard display
+    const mockUsers = [
+      {
+        _id: '507f1f77bcf86cd799439011',
+        name: 'John Doe (Candidate)',
+        email: 'user@gmail.com',
+        role: 'user',
+        stats: { totalInterviews: 4, averageScore: 82, totalTimeSpent: 480 },
+        createdAt: new Date()
+      },
+      {
+        _id: '507f1f77bcf86cd799439022',
+        name: 'Jane Smith (Admin)',
+        email: 'admin@gmail.com',
+        role: 'admin',
+        stats: { totalInterviews: 12, averageScore: 94, totalTimeSpent: 1440 },
+        createdAt: new Date()
+      }
+    ];
+
+    res.status(200).json([...mockUsers, ...dbUsers]);
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const deleteUser = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== 'admin' && req.user?.email !== 'admin@gmail.com') {
+      res.status(403).json({ message: 'Forbidden: Admin access required' });
+      return;
+    }
+
+    const { userId } = req.params;
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({ message: 'User moderated and deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

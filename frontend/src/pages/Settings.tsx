@@ -3,6 +3,7 @@ import Sidebar from '../components/shared/Sidebar';
 import Header from '../components/shared/Header';
 import { useAuth } from '../context/AuthContext';
 import { Settings as SettingsIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Settings: React.FC = () => {
   const { user, updateProfile } = useAuth();
@@ -12,7 +13,7 @@ const Settings: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Mock settings toggles
+  // Custom switch toggles
   const [cameraRequired, setCameraRequired] = useState(true);
   const [audioFeedback, setAudioFeedback] = useState(true);
 
@@ -41,8 +42,12 @@ const Settings: React.FC = () => {
 
         <main className="flex-grow p-8 space-y-8 max-w-3xl w-full mx-auto">
           {/* Profile settings form */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6"
+          >
+            <div className="flex items-center gap-2 border-b border-slate-800 pb-3 text-left">
               <SettingsIcon className="h-5 w-5 text-[#6C63FF]" />
               <h3 className="font-bold text-sm text-slate-200">Account Details</h3>
             </div>
@@ -61,27 +66,27 @@ const Settings: React.FC = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 text-left">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Display Name</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Display Name</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-850 text-slate-250 placeholder-slate-600 focus:outline-none focus:border-[#6C63FF] text-xs transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-855 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#6C63FF] text-xs transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-850 text-slate-250 placeholder-slate-600 focus:outline-none focus:border-[#6C63FF] text-xs transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-855 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#6C63FF] text-xs transition-colors"
                   />
                 </div>
               </div>
@@ -96,10 +101,15 @@ const Settings: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
+          </motion.div>
 
           {/* AI configurations mockup options */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6 text-left"
+          >
             <div className="border-b border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-slate-200">Mock Settings Preferences</h3>
             </div>
@@ -107,31 +117,49 @@ const Settings: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-slate-350 block">Require Video Tracking</span>
-                  <p className="text-[10px] text-slate-500">Automatically activate webcam analytics alerts on starting mock sessions.</p>
+                  <span className="text-xs font-bold text-slate-200 block">Require Video Tracking</span>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Automatically activate webcam analytics alerts on starting mock sessions.</p>
                 </div>
-                <input 
-                  type="checkbox" 
-                  checked={cameraRequired} 
-                  onChange={(e) => setCameraRequired(e.target.checked)}
-                  className="h-4 w-4 accent-[#6C63FF] cursor-pointer" 
-                />
+                
+                {/* Animated Switch Component */}
+                <button 
+                  type="button" 
+                  onClick={() => setCameraRequired(!cameraRequired)}
+                  className={`w-10 h-5.5 rounded-full p-0.5 relative transition-colors focus:outline-none cursor-pointer flex items-center ${
+                    cameraRequired ? 'bg-[#6C63FF]' : 'bg-slate-850 border border-slate-800'
+                  }`}
+                >
+                  <div 
+                    className={`h-4.5 w-4.5 rounded-full bg-white transition-all absolute top-0.5 ${
+                      cameraRequired ? 'left-[18px]' : 'left-0.5'
+                    }`}
+                  />
+                </button>
               </div>
 
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-slate-350 block">Active Voice Warnings</span>
-                  <p className="text-[10px] text-slate-500">Emit live audio guidelines when pacing rises too fast.</p>
+                  <span className="text-xs font-bold text-slate-200 block">Active Voice Warnings</span>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Emit live audio guidelines when pacing rises too fast.</p>
                 </div>
-                <input 
-                  type="checkbox" 
-                  checked={audioFeedback} 
-                  onChange={(e) => setAudioFeedback(e.target.checked)}
-                  className="h-4 w-4 accent-[#6C63FF] cursor-pointer" 
-                />
+                
+                {/* Animated Switch Component */}
+                <button 
+                  type="button" 
+                  onClick={() => setAudioFeedback(!audioFeedback)}
+                  className={`w-10 h-5.5 rounded-full p-0.5 relative transition-colors focus:outline-none cursor-pointer flex items-center ${
+                    audioFeedback ? 'bg-[#6C63FF]' : 'bg-slate-855 border border-slate-800'
+                  }`}
+                >
+                  <div 
+                    className={`h-4.5 w-4.5 rounded-full bg-white transition-all absolute top-0.5 ${
+                      audioFeedback ? 'left-[18px]' : 'left-0.5'
+                    }`}
+                  />
+                </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </main>
       </div>
     </div>

@@ -30,8 +30,8 @@ const LoginPage: React.FC = () => {
   return (
     <div className="bg-[#0F172A] text-[#F8FAFC] min-h-screen flex flex-col justify-center items-center p-6 relative overflow-hidden font-sans">
       {/* Glow Ambient Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#6C63FF]/10 blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-[#8B5CF6]/10 blur-[100px] pointer-events-none"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#6C63FF]/10 blur-[100px] pointer-events-none animate-float-blob"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-[#8B5CF6]/10 blur-[100px] pointer-events-none animate-float-blob-delayed"></div>
 
       <div className="absolute top-8 left-8">
         <Link to="/" className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
