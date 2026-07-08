@@ -166,6 +166,470 @@
   animation: float-blob-delayed 26s infinite ease-in-out;
 }
 
+/* Premium Grid and Neon Utilities */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-grid-pattern-dense {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.02;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.aurora-bg {
+  position: absolute;
+  filter: blur(140px);
+  opacity: 0.15;
+  mix-blend-mode: screen;
+}
+
+.neon-glow-indigo {
+  box-shadow: 0 0 20px 0 rgba(99, 102, 241, 0.25);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 20px 0 rgba(139, 92, 246, 0.25);
+}
+
+/* ======================================= */
+/*  FLOATING GEOMETRIC SHAPES              */
+/* ======================================= */
+@keyframes float-rotate {
+  0% { transform: translateY(0px) rotate(0deg); opacity: 0.06; }
+  25% { transform: translateY(-30px) rotate(90deg); opacity: 0.1; }
+  50% { transform: translateY(-10px) rotate(180deg); opacity: 0.04; }
+  75% { transform: translateY(-40px) rotate(270deg); opacity: 0.08; }
+  100% { transform: translateY(0px) rotate(360deg); opacity: 0.06; }
+}
+
+@keyframes float-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(20px, -40px) scale(1.05); }
+  50% { transform: translate(-15px, -20px) scale(0.95); }
+  75% { transform: translate(10px, -50px) scale(1.02); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.geo-shape {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.geo-shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 34px solid rgba(108, 99, 255, 0.06);
+  animation: float-rotate 28s infinite ease-in-out;
+}
+
+.geo-shape-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(139, 92, 246, 0.12);
+  animation: float-drift 24s infinite ease-in-out;
+}
+
+.geo-shape-square {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid rgba(6, 182, 212, 0.1);
+  animation: float-rotate 32s infinite ease-in-out reverse;
+}
+
+.geo-shape-diamond {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid rgba(108, 99, 255, 0.1);
+  transform: rotate(45deg);
+  animation: float-drift 20s infinite ease-in-out;
+}
+
+.geo-shape-ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.06);
+  animation: float-rotate 36s infinite ease-in-out;
+}
+
+.geo-shape-cross {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  animation: float-drift 30s infinite ease-in-out;
+}
+.geo-shape-cross::before,
+.geo-shape-cross::after {
+  content: '';
+  position: absolute;
+  background: rgba(108, 99, 255, 0.08);
+}
+.geo-shape-cross::before {
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+}
+.geo-shape-cross::after {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 2px;
+}
+
+/* ======================================= */
+/*  ANIMATED PROGRESS RINGS (SVG)          */
+/* ======================================= */
+@keyframes progress-ring-spin {
+  0% { stroke-dashoffset: 283; }
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* ======================================= */
+/*  ANIMATED COUNT-UP NUMBERS              */
+/* ======================================= */
+@keyframes count-fade-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.count-up-enter {
+  animation: count-fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ======================================= */
+/*  SPOTLIGHT CURSOR TRACKER               */
+/* ======================================= */
+.spotlight-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-container::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(108, 99, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+/* ======================================= */
+/*  LIQUID GRADIENT BLOBS                  */
+/* ======================================= */
+@keyframes morph-blob {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 60% 30% 70% / 40% 50% 70% 60%; }
+  75% { border-radius: 60% 30% 50% 40% / 70% 40% 60% 30%; }
+}
+
+.liquid-blob {
+  position: absolute;
+  pointer-events: none;
+  animation: morph-blob 18s ease-in-out infinite, float-blob 22s ease-in-out infinite;
+  filter: blur(80px);
+  opacity: 0.08;
+}
+
+.liquid-blob-primary {
+  background: linear-gradient(135deg, #6C63FF, #8B5CF6, #A78BFA);
+}
+
+.liquid-blob-accent {
+  background: linear-gradient(135deg, #06B6D4, #3B82F6, #8B5CF6);
+}
+
+/* ======================================= */
+/*  ANIMATED SVG LINE DRAWINGS             */
+/* ======================================= */
+@keyframes draw-line {
+  0% { stroke-dashoffset: 1000; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.svg-draw-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw-line 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ======================================= */
+/*  DYNAMIC LIGHTING / GLOW EFFECTS        */
+/* ======================================= */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; filter: blur(40px); }
+  50% { opacity: 0.7; filter: blur(60px); }
+}
+
+.dynamic-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: glow-pulse 6s ease-in-out infinite;
+}
+
+/* ======================================= */
+/*  SECTION REVEAL ANIMATIONS              */
+/* ======================================= */
+@keyframes reveal-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes reveal-scale {
+  0% { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.reveal-up {
+  animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-scale {
+  animation: reveal-scale 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ======================================= */
+/*  PREMIUM LOADING SPINNERS               */
+/* ======================================= */
+@keyframes spin-premium {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.premium-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(108, 99, 255, 0.1);
+  border-top-color: #8B5CF6;
+  animation: spin-premium 0.8s linear infinite;
+}
+
+.premium-spinner-sm {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(108, 99, 255, 0.1);
+  border-top-color: #8B5CF6;
+  animation: spin-premium 0.8s linear infinite;
+}
+
+/* ======================================= */
+/*  ANIMATED PROGRESS BARS                 */
+/* ======================================= */
+@keyframes progress-fill {
+  0% { width: 0%; }
+}
+
+.progress-bar-animated {
+  animation: progress-fill 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ======================================= */
+/*  SMOOTH ACCORDION / MODAL TRANSITIONS   */
+/* ======================================= */
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
+              opacity 0.3s ease, 
+              padding 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ======================================= */
+/*  ANIMATED VOICE WAVEFORM                */
+/* ======================================= */
+@keyframes waveform-bar {
+  0%, 100% { height: 8px; }
+  50% { height: var(--wave-height, 24px); }
+}
+
+.waveform-bar {
+  display: inline-block;
+  width: 3px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(to top, #6C63FF, #A78BFA);
+  animation: waveform-bar var(--wave-speed, 0.6s) ease-in-out infinite;
+}
+
+/* ======================================= */
+/*  ICON MICRO-ANIMATIONS                  */
+/* ======================================= */
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes icon-spin-once {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.icon-animate-bounce:hover {
+  animation: icon-bounce 0.5s ease;
+}
+
+.icon-animate-spin:hover {
+  animation: icon-spin-once 0.6s ease;
+}
+
+/* ======================================= */
+/*  CARD ENTRANCE STAGGER                  */
+/* ======================================= */
+@keyframes card-enter {
+  0% { opacity: 0; transform: translateY(20px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card-entrance {
+  animation: card-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card-entrance:nth-child(1) { animation-delay: 0.05s; }
+.card-entrance:nth-child(2) { animation-delay: 0.1s; }
+.card-entrance:nth-child(3) { animation-delay: 0.15s; }
+.card-entrance:nth-child(4) { animation-delay: 0.2s; }
+.card-entrance:nth-child(5) { animation-delay: 0.25s; }
+.card-entrance:nth-child(6) { animation-delay: 0.3s; }
+
+/* ======================================= */
+/*  BUTTON MICRO-INTERACTIONS              */
+/* ======================================= */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(108, 99, 255, 0.2);
+}
+
+.btn-premium:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.btn-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-premium:hover::before {
+  left: 100%;
+}
+
+/* ======================================= */
+/*  TOOLTIP FADE                           */
+/* ======================================= */
+.tooltip-fade {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.tooltip-trigger:hover .tooltip-fade {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ======================================= */
+/*  SKELETON PULSE (Premium)               */
+/* ======================================= */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.skeleton-premium {
+  background: linear-gradient(90deg, 
+    rgba(30, 41, 59, 0.5), 
+    rgba(51, 65, 85, 0.5), 
+    rgba(30, 41, 59, 0.5)
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ======================================= */
+/*  NOTIFICATION TOAST                     */
+/* ======================================= */
+@keyframes toast-enter {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toast-exit {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+}
+
+.toast-enter {
+  animation: toast-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.toast-exit {
+  animation: toast-exit 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ======================================= */
+/*  DYNAMIC THEME TRANSITIONS              */
+/* ======================================= */
+* {
+  transition-property: background-color, border-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
 @media print {
   aside, header, button, nav, .flex.items-center.gap-2 {
     display: none !important;

@@ -12,6 +12,8 @@ import {
   Check 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LottieAnimation from '../components/shared/LottieAnimation';
+import FloatingShapes from '../components/shared/FloatingShapes';
 
 interface IResume {
   _id: string;
@@ -129,10 +131,15 @@ const ResumeUpload: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
       
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-accent w-[350px] h-[350px] top-[10%] right-[-5%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Upload Resume" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto relative z-[1]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             
             {/* Left Column: Upload Form and List */}
@@ -173,7 +180,15 @@ const ResumeUpload: React.FC = () => {
                       accept=".pdf,.docx,.doc,.txt"
                       className="absolute inset-0 opacity-0 cursor-pointer z-20"
                     />
-                    <UploadCloud className="h-10 w-10 text-slate-500 mb-4" />
+                    {isUploading ? (
+                      <LottieAnimation 
+                        src="https://assets9.lottiefiles.com/packages/lf20_wdqlgbyg.json" 
+                        className="w-32 h-32 mb-2"
+                      />
+                    ) : (
+                      <UploadCloud className="h-10 w-10 text-slate-500 mb-4 transition-transform hover:scale-110 duration-300" />
+                    )}
+
                     {file ? (
                       <div className="space-y-1 relative z-20">
                         <p className="text-sm font-bold text-slate-200 truncate max-w-xs">{file.name}</p>

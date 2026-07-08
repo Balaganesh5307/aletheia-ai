@@ -15,9 +15,13 @@ import {
   Plus,
   Sparkles,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import AnimatedCounter from '../components/shared/AnimatedCounter';
+import ProgressRing from '../components/shared/ProgressRing';
+import FloatingShapes from '../components/shared/FloatingShapes';
 
 interface IInterviewSummary {
   _id: string;
@@ -96,14 +100,28 @@ const Dashboard: React.FC = () => {
     show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
   };
 
+  const avgScore = user?.stats?.averageScore || 0;
+  const totalInterviews = user?.stats?.totalInterviews || 0;
+  const totalTime = user?.stats?.totalTimeSpent ? Math.round(user.stats.totalTimeSpent / 60) : 0;
+
   return (
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Floating geometric decorations */}
+        <FloatingShapes variant="minimal" />
+
+        {/* Liquid gradient blobs */}
+        <div className="liquid-blob liquid-blob-primary w-[400px] h-[400px] top-[-5%] right-[-10%]"></div>
+        <div className="liquid-blob liquid-blob-accent w-[300px] h-[300px] bottom-[10%] left-[-5%]"></div>
+
+        {/* Dense grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Dashboard" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto relative z-[1]">
           {/* Welcome Banner with floating element glows */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
@@ -139,26 +157,64 @@ const Dashboard: React.FC = () => {
             animate="show"
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            {stats.map((stat, idx) => (
-              <motion.div 
-                key={stat.name} 
-                variants={itemVariants}
-                whileHover={{ y: -4, borderColor: 'rgba(108, 99, 255, 0.35)', boxShadow: '0 8px 32px 0 rgba(108, 99, 255, 0.08)' }}
-                className="glass-card rounded-2xl p-6 border border-slate-850 flex items-center justify-between transition-all duration-300"
-              >
-                <div className="space-y-1">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{stat.name}</span>
-                  <div className="text-2xl font-extrabold text-white">{stat.value}</div>
-                  <p className="text-[10px] text-slate-450">{stat.description}</p>
+            {/* Stat: Total Mock Sessions */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -4, borderColor: 'rgba(108, 99, 255, 0.35)', boxShadow: '0 8px 32px 0 rgba(108, 99, 255, 0.08)' }}
+              className="glass-card rounded-2xl p-6 border border-slate-850 flex items-center justify-between transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="dynamic-glow w-20 h-20 bg-[#6C63FF]/10 top-[-10px] right-[-10px]"></div>
+              <div className="space-y-1 relative z-[1]">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Total Mock Sessions</span>
+                <div className="text-2xl font-extrabold text-white">
+                  <AnimatedCounter end={totalInterviews} duration={1000} />
                 </div>
-                <div 
-                  className="h-12 w-12 rounded-xl flex items-center justify-center shadow-inner border border-slate-800"
-                  style={{ backgroundColor: `${stat.color}10` }}
-                >
-                  <stat.icon className="h-5 w-5" style={{ color: stat.color }} />
+                <p className="text-[10px] text-slate-450">Completed mock evaluations</p>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center shadow-inner border border-slate-800 bg-[#6C63FF]/10 icon-animate-bounce relative z-[1]">
+                <Activity className="h-5 w-5 text-[#6C63FF]" />
+              </div>
+            </motion.div>
+
+            {/* Stat: Average Score with Progress Ring */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -4, borderColor: 'rgba(139, 92, 246, 0.35)', boxShadow: '0 8px 32px 0 rgba(139, 92, 246, 0.08)' }}
+              className="glass-card rounded-2xl p-6 border border-slate-850 flex items-center justify-between transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="dynamic-glow w-20 h-20 bg-[#8B5CF6]/10 top-[-10px] right-[-10px]"></div>
+              <div className="space-y-1 relative z-[1]">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Average IQ Score</span>
+                <div className="text-2xl font-extrabold text-white">
+                  {totalInterviews > 0 ? (
+                    <><AnimatedCounter end={avgScore} duration={1400} /><span className="text-base text-slate-400">/100</span></>
+                  ) : 'N/A'}
                 </div>
-              </motion.div>
-            ))}
+                <p className="text-[10px] text-slate-450">Cumulative performance rate</p>
+              </div>
+              <ProgressRing progress={avgScore} size={52} strokeWidth={5} color="#8B5CF6">
+                <Trophy className="h-4 w-4 text-[#A78BFA]" />
+              </ProgressRing>
+            </motion.div>
+
+            {/* Stat: Time Trained */}
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -4, borderColor: 'rgba(6, 182, 212, 0.35)', boxShadow: '0 8px 32px 0 rgba(6, 182, 212, 0.08)' }}
+              className="glass-card rounded-2xl p-6 border border-slate-850 flex items-center justify-between transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="dynamic-glow w-20 h-20 bg-[#06B6D4]/10 top-[-10px] right-[-10px]"></div>
+              <div className="space-y-1 relative z-[1]">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Time Trained</span>
+                <div className="text-2xl font-extrabold text-white">
+                  <AnimatedCounter end={totalTime} duration={1200} suffix=" min" />
+                </div>
+                <p className="text-[10px] text-slate-450">Active speaking duration</p>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center shadow-inner border border-slate-800 bg-[#06B6D4]/10 icon-animate-bounce relative z-[1]">
+                <Clock className="h-5 w-5 text-[#06B6D4]" />
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* Main Grid */}
@@ -183,8 +239,18 @@ const Dashboard: React.FC = () => {
 
               {loading ? (
                 <div className="space-y-4">
-                  {[1, 2].map((i) => (
-                    <div key={i} className="h-20 rounded-2xl shimmer border border-slate-850"></div>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="rounded-2xl border border-slate-850 p-5 flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-xl skeleton-premium"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-32 skeleton-premium"></div>
+                        <div className="h-3 w-48 skeleton-premium"></div>
+                      </div>
+                      <div className="text-right space-y-2">
+                        <div className="h-3 w-16 skeleton-premium"></div>
+                        <div className="h-4 w-12 skeleton-premium"></div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : recentInterviews.length === 0 ? (

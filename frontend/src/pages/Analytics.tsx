@@ -21,6 +21,7 @@ import {
   Bar
 } from 'recharts';
 import { motion } from 'framer-motion';
+import FloatingShapes from '../components/shared/FloatingShapes';
 
 interface IScoreTrend {
   date: string;
@@ -80,13 +81,18 @@ const Analytics: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-primary w-[350px] h-[350px] top-[-5%] right-[-8%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Analytics" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto relative z-[1]">
           {loading ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-500">
-              <div className="h-8 w-8 border-4 border-[#6C63FF]/30 border-t-[#6C63FF] rounded-full animate-spin mb-2"></div>
+              <div className="premium-spinner mb-4"></div>
               <span>Assembling progression matrices...</span>
             </div>
           ) : history.length === 0 ? (

@@ -24,6 +24,8 @@ import {
   Tooltip 
 } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
+import FloatingShapes from '../components/shared/FloatingShapes';
+import AnimatedCounter from '../components/shared/AnimatedCounter';
 
 interface ISystemOverview {
   totalUsers: number;
@@ -108,14 +110,19 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-primary w-[350px] h-[350px] top-[-5%] right-[-5%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Admin Console" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto relative z-[1]">
           
           {loading ? (
             <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-500">
-              <div className="h-8 w-8 border-4 border-[#6C63FF]/30 border-t-[#6C63FF] rounded-full animate-spin mb-2"></div>
+              <div className="premium-spinner mb-4"></div>
               <span>Securing admin credentials...</span>
             </div>
           ) : (
@@ -154,7 +161,9 @@ const AdminDashboard: React.FC = () => {
                 <div className="glass-card rounded-2xl p-5 border border-slate-850 flex items-center justify-between text-left">
                   <div className="space-y-1">
                     <span className="text-[9px] text-slate-500 uppercase font-bold tracking-widest block">Total Registered</span>
-                    <span className="text-xl font-extrabold text-white">{overview?.totalUsers || 0}</span>
+                    <span className="text-xl font-extrabold text-white">
+                      <AnimatedCounter end={overview?.totalUsers || 0} duration={800} />
+                    </span>
                   </div>
                   <div className="h-10 w-10 rounded-xl bg-[#6C63FF]/10 text-[#6C63FF] border border-[#6C63FF]/20 flex items-center justify-center">
                     <Users className="h-5 w-5" />
@@ -165,7 +174,9 @@ const AdminDashboard: React.FC = () => {
                 <div className="glass-card rounded-2xl p-5 border border-slate-850 flex items-center justify-between text-left">
                   <div className="space-y-1">
                     <span className="text-[9px] text-slate-500 uppercase font-bold tracking-widest block">Mocks Conducted</span>
-                    <span className="text-xl font-extrabold text-white">{overview?.totalMocksConducted || 0}</span>
+                    <span className="text-xl font-extrabold text-white">
+                      <AnimatedCounter end={overview?.totalMocksConducted || 0} duration={800} />
+                    </span>
                   </div>
                   <div className="h-10 w-10 rounded-xl bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20 flex items-center justify-center">
                     <Activity className="h-5 w-5" />

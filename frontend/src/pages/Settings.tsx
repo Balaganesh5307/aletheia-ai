@@ -4,6 +4,7 @@ import Header from '../components/shared/Header';
 import { useAuth } from '../context/AuthContext';
 import { Settings as SettingsIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import FloatingShapes from '../components/shared/FloatingShapes';
 
 const Settings: React.FC = () => {
   const { user, updateProfile } = useAuth();
@@ -37,10 +38,14 @@ const Settings: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-accent w-[280px] h-[280px] bottom-[5%] right-[-5%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Account Settings" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-3xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-3xl w-full mx-auto relative z-[1]">
           {/* Profile settings form */}
           <motion.div 
             initial={{ opacity: 0, y: 10 }}

@@ -28,6 +28,9 @@ import {
   Tooltip
 } from 'recharts';
 import { motion } from 'framer-motion';
+import LottieAnimation from '../components/shared/LottieAnimation';
+import FloatingShapes from '../components/shared/FloatingShapes';
+import AnimatedCounter from '../components/shared/AnimatedCounter';
 
 interface IFeedbackReport {
   overallScore: number;
@@ -119,10 +122,15 @@ const FeedbackReport: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-primary w-[350px] h-[350px] top-[-5%] right-[-5%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Feedback Report" />
 
-        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-grow p-8 space-y-8 max-w-6xl w-full mx-auto relative z-[1]">
           {/* Back button & Exporter */}
           <div className="flex items-center justify-between">
             <button 
@@ -148,10 +156,20 @@ const FeedbackReport: React.FC = () => {
             
             {/* Animated Score Ring Card */}
             <div className="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-b from-[#1E293B] to-slate-900/60 min-h-[220px]">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6]"></div>
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] z-10"></div>
+              
+              {/* Confetti Overlay for passing/good scores */}
+              {report.overallScore >= 70 && (
+                <div className="absolute inset-0 pointer-events-none opacity-50 z-0">
+                  <LottieAnimation 
+                    src="https://assets10.lottiefiles.com/packages/lf20_touoh4ky.json" 
+                    className="w-full h-full"
+                  />
+                </div>
+              )}
               
               {/* Radial Progress Ring SVG */}
-              <div className="relative flex items-center justify-center mb-2">
+              <div className="relative flex items-center justify-center mb-2 z-10">
                 <svg className="w-24 h-24 transform -rotate-90">
                   <circle cx="48" cy="48" r={circleRadius} stroke="rgba(255,255,255,0.04)" strokeWidth="6" fill="transparent" />
                   <motion.circle 
@@ -169,7 +187,9 @@ const FeedbackReport: React.FC = () => {
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center">
-                  <span className="text-2xl font-black text-white">{report.overallScore}</span>
+                  <span className="text-2xl font-black text-white">
+                    <AnimatedCounter end={report.overallScore} duration={1200} />
+                  </span>
                   <span className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">Mock IQ</span>
                 </div>
               </div>

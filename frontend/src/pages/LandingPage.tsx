@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import LottieAnimation from '../components/shared/LottieAnimation';
+import { useAuth } from '../context/AuthContext';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -25,6 +27,7 @@ import {
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'resume' | 'camera' | 'gemini' | 'analytics'>('resume');
@@ -163,6 +166,9 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="bg-[#0F172A] text-[#F8FAFC] min-h-screen relative overflow-hidden font-sans scroll-smooth">
+      {/* Grid Pattern Guide Overlay */}
+      <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-60 z-0"></div>
+
       {/* Background ambient glow blobs */}
       <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#6C63FF]/8 blur-[130px] pointer-events-none animate-float-blob"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[#8B5CF6]/8 blur-[130px] pointer-events-none animate-float-blob-delayed"></div>
@@ -178,15 +184,26 @@ const LandingPage: React.FC = () => {
           </h1>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/login')} className="px-4 py-2 text-slate-300 hover:text-white font-medium transition-colors text-sm cursor-pointer">
-            Sign In
-          </button>
-          <button 
-            onClick={() => navigate('/register')} 
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-90 transition-all font-semibold text-sm text-white shadow-lg shadow-purple-500/20 glow-btn cursor-pointer"
-          >
-            Get Started
-          </button>
+          {user ? (
+            <button 
+              onClick={() => navigate('/dashboard')} 
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-90 transition-all font-semibold text-sm text-white shadow-lg shadow-purple-500/20 glow-btn cursor-pointer"
+            >
+              Go to Dashboard
+            </button>
+          ) : (
+            <>
+              <button onClick={() => navigate('/login')} className="px-4 py-2 text-slate-300 hover:text-white font-medium transition-colors text-sm cursor-pointer">
+                Sign In
+              </button>
+              <button 
+                onClick={() => navigate('/register')} 
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-90 transition-all font-semibold text-sm text-white shadow-lg shadow-purple-500/20 glow-btn cursor-pointer"
+              >
+                Get Started
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -213,7 +230,7 @@ const LandingPage: React.FC = () => {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
               <button 
-                onClick={() => navigate('/register')}
+                onClick={() => navigate(user ? '/dashboard' : '/register')}
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#6C63FF] hover:bg-[#5a52e0] text-white font-bold transition-all shadow-xl shadow-purple-500/25 flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
                 <span>Launch Mock Interview</span>
@@ -244,7 +261,10 @@ const LandingPage: React.FC = () => {
 
               {/* State A: Idle Selection */}
               {demoState === 'idle' && (
-                <div className="space-y-6 flex-grow flex flex-col justify-center text-left">
+                <div className="space-y-4 flex-grow flex flex-col justify-center text-left">
+                  <div className="h-20 w-full mb-1 flex items-center justify-center pointer-events-none">
+                    <LottieAnimation src="https://assets5.lottiefiles.com/packages/lf20_q5pk6hy1.json" className="max-h-full max-w-[140px]" />
+                  </div>
                   <div>
                     <h3 className="font-bold text-sm text-slate-200">Configure Sandbox Parameters</h3>
                     <p className="text-[11px] text-slate-500 mt-1">Select a role and launch our mini mockup generator to test core widgets.</p>
