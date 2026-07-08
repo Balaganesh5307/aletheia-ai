@@ -75,6 +75,48 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
+    // Direct bypass configurations for developer preview accounts
+    if (email === 'client@interviewiq.ai' && password === 'Password123') {
+      const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439011', email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      res.status(200).json({
+        token: mockToken,
+        user: {
+          id: '507f1f77bcf86cd799439011',
+          name: 'John Doe (Candidate)',
+          email: 'client@interviewiq.ai',
+          achievements: DEFAULT_ACHIEVEMENTS,
+          stats: {
+            totalInterviews: 4,
+            averageScore: 82,
+            totalTimeSpent: 480
+          }
+        }
+      });
+      return;
+    }
+
+    if (email === 'admin@interviewiq.ai' && password === 'AdminPassword123') {
+      const mockToken = jwt.sign({ id: '507f1f77bcf86cd799439022', email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      res.status(200).json({
+        token: mockToken,
+        user: {
+          id: '507f1f77bcf86cd799439022',
+          name: 'Jane Smith (Admin)',
+          email: 'admin@interviewiq.ai',
+          achievements: [
+            ...DEFAULT_ACHIEVEMENTS,
+            { id: 'expert_90', title: 'Perfect IQ', description: 'Score 90+ in a session', icon: 'Zap', unlockedAt: new Date() }
+          ],
+          stats: {
+            totalInterviews: 12,
+            averageScore: 94,
+            totalTimeSpent: 1440
+          }
+        }
+      });
+      return;
+    }
+
     const user = await User.findOne({ email });
     if (!user || !user.password) {
       res.status(400).json({ message: 'Invalid credentials' });
