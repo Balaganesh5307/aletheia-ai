@@ -126,3 +126,72 @@
     background-position: -200% 0;
   }
 }
+
+/* Floating background blobs */
+@keyframes float-blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(40px, -60px) scale(1.15);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes float-blob-delayed {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-30px, 40px) scale(0.9);
+  }
+  66% {
+    transform: translate(40px, -30px) scale(1.1);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-float-blob {
+  animation: float-blob 22s infinite ease-in-out;
+}
+
+.animate-float-blob-delayed {
+  animation: float-blob-delayed 26s infinite ease-in-out;
+}
+
+@media print {
+  aside, header, button, nav, .flex.items-center.gap-2 {
+    display: none !important;
+  }
+  body, .flex-1, main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .glass-card {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+    page-break-inside: avoid;
+  }
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-350 {
+    color: #000000 !important;
+  }
+  .text-slate-400, .text-slate-500, .text-slate-550 {
+    color: #475569 !important;
+  }
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 260px !important;
+  }
+}

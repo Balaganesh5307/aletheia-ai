@@ -5,16 +5,20 @@ import Header from '../components/shared/Header';
 import api from '../services/api';
 import { 
   Video, 
-  HelpCircle, 
   Sparkles, 
-  Calendar, 
   Clock, 
   Sliders, 
   FileText,
   AlertTriangle,
-  BrainCircuit
+  BrainCircuit,
+  Monitor,
+  Cpu,
+  Layers,
+  Bot,
+  Users2,
+  LineChart
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface IResume {
   _id: string;
@@ -32,12 +36,12 @@ const InterviewSetup: React.FC = () => {
   const [error, setError] = useState('');
 
   const jobRoles = [
-    'Frontend Engineer',
-    'Backend Engineer',
-    'Full-Stack Developer',
-    'AI/ML Architect',
-    'Product Manager',
-    'Data Scientist'
+    { name: 'Frontend Engineer', description: 'React, CSS, optimization & client apps', icon: Monitor },
+    { name: 'Backend Engineer', description: 'Node.js, PostgreSQL, DB scaling & APIs', icon: Cpu },
+    { name: 'Full-Stack Developer', description: 'End-to-end setups & product logic', icon: Layers },
+    { name: 'AI/ML Architect', description: 'Gemini integrations & serverless pipes', icon: Bot },
+    { name: 'Product Manager', description: 'Roadmaps, backlog metrics & telemetry', icon: Users2 },
+    { name: 'Data Scientist', description: 'Python scripts, database tables & charts', icon: LineChart }
   ];
 
   useEffect(() => {
@@ -83,18 +87,18 @@ const InterviewSetup: React.FC = () => {
       <div className="flex-1 pl-64 flex flex-col min-h-screen">
         <Header title="Interview Setup" />
 
-        <main className="flex-grow p-8 max-w-4xl w-full mx-auto flex items-center justify-center">
-          <div className="w-full grid grid-cols-1 md:grid-cols-5 gap-8 items-stretch">
+        <main className="flex-grow p-8 max-w-6xl w-full mx-auto flex items-center justify-center">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
             
             {/* Left Side: Setup Forms */}
-            <div className="md:col-span-3 glass-card rounded-2xl p-6 border border-slate-800 space-y-6 flex flex-col justify-between">
+            <div className="lg:col-span-3 glass-card rounded-2xl p-6 border border-slate-800 space-y-6 flex flex-col justify-between text-left">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <BrainCircuit className="h-5 w-5 text-[#6C63FF]" />
-                  <h3 className="font-bold text-lg text-slate-100">Setup Your Session</h3>
+                  <h3 className="font-bold text-base text-slate-100">Setup Your Session</h3>
                 </div>
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  Tailor the AI recruiter to test your precise skills. Configure the parameters below to launch.
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Select a target track, set the difficulty, and lock in session parameters to launch.
                 </p>
               </div>
 
@@ -105,83 +109,102 @@ const InterviewSetup: React.FC = () => {
                 </div>
               )}
 
-              <form onSubmit={handleStart} className="space-y-4">
-                {/* Job Title */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Target Job Role</label>
-                  <select
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-850 text-slate-200 text-sm focus:outline-none focus:border-[#6C63FF] transition-colors"
-                  >
+              <form onSubmit={handleStart} className="space-y-6">
+                
+                {/* Visual Career Track Selector Cards Grid */}
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target Career Track</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin">
                     {jobRoles.map((role) => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Difficulty Select */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Interview Difficulty</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['Entry', 'Mid', 'Senior'] as const).map((level) => (
-                      <button
-                        key={level}
-                        type="button"
-                        onClick={() => setDifficulty(level)}
-                        className={`py-3 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
-                          difficulty === level
-                            ? 'bg-gradient-to-r from-[#6C63FF]/20 to-[#8B5CF6]/20 border-[#6C63FF] text-[#A78BFA] shadow-md shadow-purple-500/5'
-                            : 'bg-slate-900 border-slate-850 text-slate-400 hover:border-slate-800 hover:text-slate-300'
+                      <div
+                        key={role.name}
+                        onClick={() => setJobTitle(role.name)}
+                        className={`p-3.5 rounded-xl border transition-all cursor-pointer text-left flex gap-3 items-start ${
+                          jobTitle === role.name 
+                            ? 'bg-[#6C63FF]/5 border-[#6C63FF] shadow-inner shadow-purple-500/5' 
+                            : 'bg-slate-900/40 border-slate-850 hover:border-slate-800'
                         }`}
                       >
-                        {level}
-                      </button>
+                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 border ${
+                          jobTitle === role.name 
+                            ? 'bg-[#6C63FF]/15 border-[#6C63FF]/30 text-[#A78BFA]' 
+                            : 'bg-slate-905 border-slate-800 text-slate-450'
+                        }`}>
+                          <role.icon className="h-4 w-4" />
+                        </div>
+                        <div className="overflow-hidden">
+                          <span className="block text-xs font-bold text-slate-200 truncate">{role.name}</span>
+                          <p className="text-[10px] text-slate-500 line-clamp-1 mt-0.5">{role.description}</p>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Duration select */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Time Limit</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[10, 15, 20].map((mins) => (
-                      <button
-                        key={mins}
-                        type="button"
-                        onClick={() => setDurationLimit(mins)}
-                        className={`py-3 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
-                          durationLimit === mins
-                            ? 'bg-gradient-to-r from-[#6C63FF]/20 to-[#8B5CF6]/20 border-[#6C63FF] text-[#A78BFA]'
-                            : 'bg-slate-900 border-slate-850 text-slate-400 hover:border-slate-800'
-                        }`}
-                      >
-                        {mins} minutes
-                      </button>
-                    ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Difficulty Select */}
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Difficulty</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['Entry', 'Mid', 'Senior'] as const).map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setDifficulty(level)}
+                          className={`py-2.5 rounded-xl font-bold text-[10px] uppercase border transition-all cursor-pointer ${
+                            difficulty === level
+                              ? 'bg-gradient-to-r from-[#6C63FF]/20 to-[#8B5CF6]/20 border-[#6C63FF] text-[#A78BFA] shadow-md'
+                              : 'bg-slate-950 border-slate-850 text-slate-500 hover:border-slate-800'
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Duration select */}
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Duration Limit</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[10, 15, 20].map((mins) => (
+                        <button
+                          key={mins}
+                          type="button"
+                          onClick={() => setDurationLimit(mins)}
+                          className={`py-2.5 rounded-xl font-bold text-[10px] border transition-all cursor-pointer ${
+                            durationLimit === mins
+                              ? 'bg-gradient-to-r from-[#6C63FF]/20 to-[#8B5CF6]/20 border-[#6C63FF] text-[#A78BFA] shadow-md'
+                              : 'bg-slate-950 border-slate-850 text-slate-500 hover:border-slate-800'
+                          }`}
+                        >
+                          {mins} Min
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 {/* Resume selection */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Context Resume</label>
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tailored Resume Profile</label>
                   {resumes.length === 0 ? (
                     <div 
                       onClick={() => navigate('/resume')}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-850 hover:border-slate-800 flex items-center justify-between text-slate-500 text-xs cursor-pointer transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-850 hover:border-slate-800 flex items-center justify-between text-slate-550 text-xs cursor-pointer transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FileText className="h-4 w-4" />
-                        <span>No resumes found. Click to upload...</span>
+                        <span>No resumes found. Click here to parse your CV...</span>
                       </span>
                     </div>
                   ) : (
                     <select
                       value={resumeId}
                       onChange={(e) => setResumeId(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-850 text-slate-200 text-sm focus:outline-none focus:border-[#6C63FF] transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-850 text-slate-350 text-xs focus:outline-none focus:border-[#6C63FF] transition-colors"
                     >
-                      <option value="">No Resume (General Questions)</option>
+                      <option value="">No Resume (General Scenario Questions)</option>
                       {resumes.map((res) => (
                         <option key={res._id} value={res._id}>{res.fileName}</option>
                       ))}
@@ -192,17 +215,17 @@ const InterviewSetup: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-90 transition-all font-bold text-sm text-white shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-6 glow-btn"
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-[#6C63FF] to-[#8B5CF6] hover:opacity-95 transition-all font-bold text-xs text-white shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-6 glow-btn"
                 >
                   {loading ? (
                     <>
-                      <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Assembling Questions...</span>
+                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Compiling Scenario Rubrics...</span>
                     </>
                   ) : (
                     <>
                       <Video className="h-4 w-4" />
-                      <span>Launch Mock Interview</span>
+                      <span>Start Mock Session</span>
                     </>
                   )}
                 </button>
@@ -210,33 +233,33 @@ const InterviewSetup: React.FC = () => {
             </div>
 
             {/* Right Side: Pro Advices and Preview */}
-            <div className="md:col-span-2 glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between bg-gradient-to-br from-slate-900/80 to-[#1E293B]/40">
+            <div className="lg:col-span-2 glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between bg-gradient-to-br from-slate-900/60 to-[#1E293B]/40 text-left">
               <div className="space-y-6">
                 <div>
-                  <span className="text-[10px] text-[#A78BFA] font-bold uppercase tracking-widest block mb-1">Interactive Advisor</span>
-                  <h4 className="font-bold text-sm text-slate-200">Before you hit launch:</h4>
+                  <span className="text-[9px] text-[#A78BFA] font-bold uppercase tracking-widest block mb-1">Telemetry Guidelines</span>
+                  <h4 className="font-bold text-sm text-slate-200">Before starting checklist:</h4>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex gap-3 text-xs leading-relaxed">
                     <Clock className="h-4 w-4 text-[#8B5CF6] flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold text-slate-300 block">Manage your time</span>
-                      <p className="text-slate-500 mt-0.5">We track pacing and duration limit. Prepare concise STAR-structured responses.</p>
+                      <span className="font-bold text-slate-300 block">Manage timing thresholds</span>
+                      <p className="text-slate-500 text-[11px] mt-0.5">Mock checks track verbal delivery speeds and timing blocks per technical scenario.</p>
                     </div>
                   </div>
                   <div className="flex gap-3 text-xs leading-relaxed">
                     <Video className="h-4 w-4 text-[#8B5CF6] flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold text-slate-300 block">Allow Camera and Audio access</span>
-                      <p className="text-slate-500 mt-0.5">Webcam tracking reports gaze directions and confidence. Grant prompt access when starting.</p>
+                      <span className="font-bold text-slate-300 block">Enable browser camera</span>
+                      <p className="text-slate-500 text-[11px] mt-0.5">Webcam telemetry maps gaze stability vectors. Grant permission prompts.</p>
                     </div>
                   </div>
                   <div className="flex gap-3 text-xs leading-relaxed">
                     <Sliders className="h-4 w-4 text-[#8B5CF6] flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold text-slate-300 block">Review resume profile</span>
-                      <p className="text-slate-500 mt-0.5">Selecting a resume guides Gemini to quiz you on your listed developer frameworks.</p>
+                      <span className="font-bold text-slate-300 block">Review resume profiles</span>
+                      <p className="text-slate-500 text-[11px] mt-0.5">Vetting frameworks on CV files tailors the tech assessments directly.</p>
                     </div>
                   </div>
                 </div>
@@ -244,8 +267,8 @@ const InterviewSetup: React.FC = () => {
 
               <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-850 mt-6 flex items-center gap-3">
                 <Sparkles className="h-5 w-5 text-amber-400 flex-shrink-0 animate-pulse" />
-                <span className="text-[10px] text-slate-400 font-semibold leading-normal">
-                  Gemini API dynamically compiles real-time grading rubrics per generated technical question.
+                <span className="text-[10px] text-slate-500 font-semibold leading-normal">
+                  Our FastAPI models generate grading benchmarks aligned with senior engineer performance patterns.
                 </span>
               </div>
             </div>

@@ -63,4 +63,9 @@ router.post('/interviews/complete', authenticateToken, interviewCtrl.completeInt
 router.get('/feedback/:interviewId', authenticateToken, interviewCtrl.getFeedbackReport);
 router.get('/analytics/overview', authenticateToken, interviewCtrl.getAnalytics);
 
+// Admin Management Routes
+router.get('/admin/overview', authenticateToken, authCtrl.getAdminOverview);
+router.get('/admin/users', authenticateToken, authCtrl.getAllUsers);
+router.delete('/admin/users/:userId', authenticateToken, authCtrl.deleteUser);
+
 export default router;

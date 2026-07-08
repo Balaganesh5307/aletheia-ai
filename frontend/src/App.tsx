@@ -15,6 +15,8 @@ import FeedbackReport from './pages/FeedbackReport';
 import Analytics from './pages/Analytics';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Protected Route Guard
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -35,6 +37,25 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
+// Admin Route Guard
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center text-slate-400">
+        <div className="h-6 w-6 border-2 border-[#6C63FF]/30 border-t-[#6C63FF] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user || (user.role !== 'admin' && user.email !== 'admin@gmail.com')) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
@@ -43,6 +64,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
       {/* Protected SaaS Console */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -53,6 +75,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+      {/* Admin Panel */}
+      <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

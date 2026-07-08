@@ -10,7 +10,8 @@ import {
   User, 
   LogOut, 
   Award,
-  Cpu
+  Cpu,
+  Shield
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -26,6 +27,12 @@ const Sidebar: React.FC = () => {
     { name: 'Profile', path: '/profile', icon: User },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
+
+  const adminItem = { name: 'Admin Console', path: '/admin', icon: Shield };
+
+  const displayedItems = (user?.role === 'admin' || user?.email === 'admin@gmail.com')
+    ? [...menuItems, adminItem]
+    : menuItems;
 
   const handleLogout = () => {
     logout();
@@ -50,7 +57,7 @@ const Sidebar: React.FC = () => {
 
         {/* Navigation list */}
         <nav className="space-y-1">
-          {menuItems.map((item) => (
+          {displayedItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
