@@ -5,12 +5,18 @@ import { Cpu, ShieldAlert, Key, Mail, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const LoginPage: React.FC = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +35,9 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="bg-[#0F172A] text-[#F8FAFC] min-h-screen flex flex-col justify-center items-center p-6 relative overflow-hidden font-sans">
+      {/* Grid Pattern Guide Overlay */}
+      <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-60 z-0"></div>
+
       {/* Glow Ambient Blobs */}
       <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-[#6C63FF]/10 blur-[100px] pointer-events-none animate-float-blob"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-[#8B5CF6]/10 blur-[100px] pointer-events-none animate-float-blob-delayed"></div>
@@ -52,7 +61,7 @@ const LoginPage: React.FC = () => {
             <Cpu className="text-white h-5 w-5" />
           </div>
           <h1 className="font-bold text-2xl tracking-tight">
-            Interview<span className="text-[#6C63FF]">IQ</span>
+            Aletheia<span className="text-[#6C63FF]"> AI</span>
           </h1>
         </div>
 

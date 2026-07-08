@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import AdminDashboard from './pages/AdminDashboard';
+import GlowCursor from './components/shared/GlowCursor';
 
 // Protected Route Guard
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -89,6 +90,8 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <div className="noise-overlay" />
+        <GlowCursor />
         <AppRoutes />
       </AuthProvider>
     </BrowserRouter>

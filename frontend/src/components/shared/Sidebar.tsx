@@ -43,13 +43,13 @@ const Sidebar: React.FC = () => {
     <aside className="w-64 glass-card h-screen fixed left-0 top-0 flex flex-col justify-between p-6 z-20 border-r border-slate-800">
       {/* Brand logo */}
       <div>
-        <div className="flex items-center gap-3 mb-10 cursor-pointer" onClick={() => navigate('/dashboard')}>
+        <div className="flex items-center gap-3 mb-10 cursor-pointer" onClick={() => navigate('/')}>
           <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-[#6C63FF] to-[#8B5CF6] flex items-center justify-center shadow-lg shadow-purple-500/20">
             <Cpu className="text-white h-5 w-5" />
           </div>
           <div>
             <h1 className="font-bold text-lg tracking-tight text-white flex items-center gap-1">
-              Interview<span className="text-[#6C63FF]">IQ</span>
+              Aletheia<span className="text-[#6C63FF]"> AI</span>
             </h1>
             <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">AI Assistant</span>
           </div>

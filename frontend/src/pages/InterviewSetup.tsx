@@ -19,6 +19,7 @@ import {
   LineChart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FloatingShapes from '../components/shared/FloatingShapes';
 
 interface IResume {
   _id: string;
@@ -84,10 +85,15 @@ const InterviewSetup: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-accent w-[350px] h-[350px] top-[10%] right-[-8%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
+
         <Header title="Interview Setup" />
 
-        <main className="flex-grow p-8 max-w-6xl w-full mx-auto flex items-center justify-center">
+        <main className="flex-grow p-8 max-w-6xl w-full mx-auto flex items-center justify-center relative z-[1]">
           <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
             
             {/* Left Side: Setup Forms */}

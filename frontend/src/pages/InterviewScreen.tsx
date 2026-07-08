@@ -17,6 +17,8 @@ import {
   Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FloatingShapes from '../components/shared/FloatingShapes';
+import VoiceWaveform from '../components/shared/VoiceWaveform';
 
 interface IQuestion {
   id: string;
@@ -331,7 +333,11 @@ const InterviewScreen: React.FC = () => {
     <div className="min-h-screen bg-[#0F172A] flex">
       <Sidebar />
 
-      <div className="flex-1 pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 pl-64 flex flex-col min-h-screen relative overflow-hidden">
+        {/* Visual decoration layers */}
+        <FloatingShapes variant="minimal" />
+        <div className="liquid-blob liquid-blob-accent w-[350px] h-[350px] top-[15%] right-[-10%]"></div>
+        <div className="absolute inset-0 bg-grid-pattern-dense pointer-events-none opacity-40 z-0"></div>
         
         {/* Dynamic header with clock */}
         <header className="h-20 flex items-center justify-between px-8 border-b border-slate-800 bg-[#0F172A]/85 backdrop-blur-md sticky top-0 z-10 w-full">
@@ -536,19 +542,7 @@ const InterviewScreen: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Your Response Transcript</label>
                     <div className="flex items-center gap-3">
-                      {isRecording && (
-                        <div className="flex gap-1 h-3 items-end">
-                          {[1, 2, 3, 4, 5].map(bar => (
-                            <motion.div
-                              key={bar}
-                              animate={{ height: [2, 12, 2] }}
-                              transition={{ repeat: Infinity, duration: 0.6, delay: bar * 0.1 }}
-                              className="w-0.5 bg-[#8B5CF6] rounded-full"
-                              style={{ height: '2px' }}
-                            />
-                          ))}
-                        </div>
-                      )}
+                      <VoiceWaveform isActive={isRecording} bars={12} className="h-5 mr-1" />
 
                       <button 
                         onClick={toggleRecording}
